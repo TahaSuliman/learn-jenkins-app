@@ -1,11 +1,35 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'node:18-alpine'
+            reuseNode true
+        }
+    }
+
     stages {
-        stage('Hello Jenkins') {
+        stage('Build') {
             steps {
-               sh 'echo "Hello DevOps in Jenkins world ..."'
+                sh '''
+                    ls -la
+                    node --version
+                    npm --version
+                    npm ci
+                    npm run build
+                    ls -la
+                '''
             }
         }
-        
     }
 }
+
+
+//pipeline {
+ //   agent any
+  //  stages {
+   //     stage('Hello Jenkins') {
+   //         steps {
+   //            sh 'echo "Hello DevOps in Jenkins world ..."'
+   //         }
+  //      }    
+ //   }
+//}
