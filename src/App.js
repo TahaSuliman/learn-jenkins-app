@@ -15,9 +15,9 @@ function App() {
           Learn Jenkins on Udemy
         </a>
       </header>
-      <p>
-          Application version: 1
-      </p>
+      <h3>
+          Taha Suliman Ramadan JENKINS CI/CD ...
+      </h3>
     </div>
   );
 }
