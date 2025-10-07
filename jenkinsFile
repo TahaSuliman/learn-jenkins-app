@@ -18,13 +18,29 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
-            steps {
-                sh 'echo "🚀 Deploying to Netlify..."'
-                sh 'npm install netlify-cli'
-                sh 'netlify deploy  --dir=build --prod  --no-build --auth $NETLIFY_AUTH_TOKEN --site $NETLIFY_SITE_ID'
-            }
-        }
+       steps {
+    sh '''
+        echo "🔧 Installing Netlify CLI..."
+        npm install netlify-cli
+        
+        echo "🔍 Checking Netlify installation..."
+        node_modules/.bin/netlify --version
+        
+        echo "🌐 Checking Netlify status..."
+        node_modules/.bin/netlify status --auth $NETLIFY_AUTH_TOKEN
+        
+        echo "🚀 Deploying to production..."
+        node_modules/.bin/netlify deploy \
+            --dir=build \
+            --prod \
+            --no-build \
+            --auth $NETLIFY_AUTH_TOKEN \
+            --site $NETLIFY_SITE_ID \
+            --message "Automated deploy - Build ${BUILD_NUMBER}"
+        
+        echo "✅ Deployment completed successfully!"
+    '''
+  }
     }
 
     post {
