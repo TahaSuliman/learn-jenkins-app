@@ -1,11 +1,11 @@
 pipeline {
     agent any
-
+    
     environment {
         NETLIFY_SITE_ID = 'df86b7d2-1b7d-4501-9025-bba28187a51d'
         NETLIFY_AUTH_TOKEN = credentials('netlify-token')
     }
-
+    
     stages {
         stage('Build') {
             steps {
@@ -17,36 +17,39 @@ pipeline {
                 sh 'ls -la build/'  // تأكد من وجود المجلد
             }
         }
-
-       steps {
-    sh '''
-        echo "🔧 Installing Netlify CLI..."
-        npm install netlify-cli
         
-        echo "🔍 Checking Netlify installation..."
-        node_modules/.bin/netlify --version
-        
-        echo "🌐 Checking Netlify status..."
-        node_modules/.bin/netlify status --auth $NETLIFY_AUTH_TOKEN
-        
-        echo "🚀 Deploying to production..."
-        node_modules/.bin/netlify deploy \
-            --dir=build \
-            --prod \
-            --no-build \
-            --auth $NETLIFY_AUTH_TOKEN \
-            --site $NETLIFY_SITE_ID \
-            --message "Automated deploy - Build ${BUILD_NUMBER}"
-        
-        echo "✅ Deployment completed successfully!"
-    '''
-  }
+        stage('Deploy') {
+            steps {
+                sh '''
+                    echo "🔧 Installing Netlify CLI..."
+                    npm install netlify-cli
+                    
+                    echo "🔍 Checking Netlify installation..."
+                    node_modules/.bin/netlify --version
+                    
+                    echo "🌐 Checking Netlify status..."
+                    node_modules/.bin/netlify status --auth $NETLIFY_AUTH_TOKEN
+                    
+                    echo "🚀 Deploying to production..."
+                    node_modules/.bin/netlify deploy \
+                        --dir=build \
+                        --prod \
+                        --no-build \
+                        --auth $NETLIFY_AUTH_TOKEN \
+                        --site $NETLIFY_SITE_ID \
+                        --message "Automated deploy - Build ${BUILD_NUMBER}"
+                    
+                    echo "✅ Deployment completed successfully!"
+                '''
+            }
+        }
     }
-
+    
     post {
         success {
             echo '✅ Deployment completed successfully!'
         }
+        
         failure {
             echo '❌ Deployment failed. Check logs.'
         }
